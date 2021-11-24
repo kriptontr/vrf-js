@@ -2,7 +2,7 @@ const assert = require('assert');
 const elliptic = require('elliptic');
 const { Evaluate, ProofHoHash } = require('..');
 
-const EC = new elliptic.ec('secp256k1');
+const EC = new elliptic.ec('secp112r1');
 
 describe('VRF', () => {
   it('full test vrf', () => {

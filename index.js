@@ -3,7 +3,7 @@ const BN = require('bn.js');
 const { sha256 } = require('js-sha256');
 const { sha512 } = require('js-sha512');
 
-const EC = new elliptic.ec('secp256k1');
+const EC = new elliptic.ec('secp112r1');
 
 function toBytesInt32(num) {
   return new Uint8Array([
@@ -109,9 +109,9 @@ function Evaluate(privateKey, m) {
   const index = sha256.array(new Uint8Array(vrf));
 
   const buf = [
-    ...new Array(32 - s.byteLength()).fill(0),
+    ...new Array(14 - s.byteLength()).fill(0),
     ...s.toArray(),
-    ...new Array(32 - t.byteLength()).fill(0),
+    ...new Array(14 - t.byteLength()).fill(0),
     ...t.toArray(),
     ...vrf,
   ];
@@ -128,12 +128,12 @@ function Evaluate(privateKey, m) {
  */
 function ProofHoHash(publicKey, data, proof) {
   const currentKey = EC.keyFromPublic(publicKey);
-  if (proof.length !== 64 + 65) {
+  if (proof.length !== 28 + 29) {
     throw new Error('invalid vrf');
   }
-  const s = proof.slice(0, 32);
-  const t = proof.slice(32, 64);
-  const vrf = proof.slice(64, 64 + 65);
+  const s = proof.slice(0, 14);
+  const t = proof.slice(14, 28);
+  const vrf = proof.slice(28, 28 + 29);
 
   const uhPoint = decodePoint(vrf);
   if (!uhPoint) {
@@ -163,7 +163,7 @@ function ProofHoHash(publicKey, data, proof) {
 
   const h2 = H2(b);
 
-  const buf = [...new Array(32 - h2.byteLength()).fill(0), ...h2.toArray()];
+  const buf = [...new Array(14 - h2.byteLength()).fill(0), ...h2.toArray()];
 
   let equal = true;
   for (let i = 0; i < buf.length; i++) {
